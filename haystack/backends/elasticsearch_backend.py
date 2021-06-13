@@ -146,6 +146,14 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
         self.setup_complete = False
         self.existing_mapping = {}
 
+    def _get_doc_type_option(self):
+        return {
+            "doc_type": "modelresult",
+        }
+
+    def _get_current_mapping(self, field_mapping):
+        return {"modelresult": {"properties": field_mapping}}
+
     def setup(self):
         """
         Defers loading until needed.
@@ -165,7 +173,7 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
         self.content_field_name, field_mapping = self.build_schema(
             unified_index.all_searchfields()
         )
-        current_mapping = {"modelresult": {"properties": field_mapping}}
+        current_mapping = self._get_current_mapping(field_mapping)
 
         if current_mapping != self.existing_mapping:
             try:
@@ -174,7 +182,7 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
                     index=self.index_name, body=self.DEFAULT_SETTINGS, ignore=400
                 )
                 self.conn.indices.put_mapping(
-                    index=self.index_name, doc_type="modelresult", body=current_mapping
+                    index=self.index_name, body=current_mapping, **self._get_doc_type_option(),
                 )
                 self.existing_mapping = current_mapping
             except Exception:
@@ -227,7 +235,7 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
                     extra={"data": {"index": index, "object": get_identifier(obj)}},
                 )
 
-        bulk(self.conn, prepped_docs, index=self.index_name, doc_type="modelresult")
+        bulk(self.conn, prepped_docs, index=self.index_name, **self._get_doc_type_option())
 
         if commit:
             self.conn.indices.refresh(index=self.index_name)
@@ -252,7 +260,7 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
 
         try:
             self.conn.delete(
-                index=self.index_name, doc_type="modelresult", id=doc_id, ignore=404
+                index=self.index_name, id=doc_id, ignore=404, **self._get_doc_type_option(),
             )
 
             if commit:
@@ -294,7 +302,7 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
                     "query": {"query_string": {"query": " OR ".join(models_to_delete)}}
                 }
                 self.conn.delete_by_query(
-                    index=self.index_name, doc_type="modelresult", body=query
+                    index=self.index_name, body=query, **self._get_doc_type_option(),
                 )
         except elasticsearch.TransportError as e:
             if not self.silently_fail:
@@ -566,8 +574,8 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
             raw_results = self.conn.search(
                 body=search_kwargs,
                 index=self.index_name,
-                doc_type="modelresult",
                 _source=True,
+                **self._get_doc_type_option(),
             )
         except elasticsearch.TransportError as e:
             if not self.silently_fail:
@@ -628,9 +636,9 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
         try:
             raw_results = self.conn.mlt(
                 index=self.index_name,
-                doc_type="modelresult",
                 id=doc_id,
                 mlt_fields=[field_name],
+                **self._get_doc_type_option(),
                 **params
             )
         except elasticsearch.TransportError as e:
