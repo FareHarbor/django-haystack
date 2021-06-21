@@ -139,7 +139,7 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
         self.conn = elasticsearch.Elasticsearch(
             connection_options["URL"],
             timeout=self.timeout,
-            **connection_options.get("KWARGS", {})
+            **connection_options.get("KWARGS", {}),
         )
         self.index_name = connection_options["INDEX_NAME"]
         self.log = logging.getLogger("haystack")
@@ -182,7 +182,9 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
                     index=self.index_name, body=self.DEFAULT_SETTINGS, ignore=400
                 )
                 self.conn.indices.put_mapping(
-                    index=self.index_name, body=current_mapping, **self._get_doc_type_option(),
+                    index=self.index_name,
+                    body=current_mapping,
+                    **self._get_doc_type_option(),
                 )
                 self.existing_mapping = current_mapping
             except Exception:
@@ -235,7 +237,12 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
                     extra={"data": {"index": index, "object": get_identifier(obj)}},
                 )
 
-        bulk(self.conn, prepped_docs, index=self.index_name, **self._get_doc_type_option())
+        bulk(
+            self.conn,
+            prepped_docs,
+            index=self.index_name,
+            **self._get_doc_type_option(),
+        )
 
         if commit:
             self.conn.indices.refresh(index=self.index_name)
@@ -260,7 +267,10 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
 
         try:
             self.conn.delete(
-                index=self.index_name, id=doc_id, ignore=404, **self._get_doc_type_option(),
+                index=self.index_name,
+                id=doc_id,
+                ignore=404,
+                **self._get_doc_type_option(),
             )
 
             if commit:
@@ -302,7 +312,9 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
                     "query": {"query_string": {"query": " OR ".join(models_to_delete)}}
                 }
                 self.conn.delete_by_query(
-                    index=self.index_name, body=query, **self._get_doc_type_option(),
+                    index=self.index_name,
+                    body=query,
+                    **self._get_doc_type_option(),
                 )
         except elasticsearch.TransportError as e:
             if not self.silently_fail:
@@ -639,7 +651,7 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
                 id=doc_id,
                 mlt_fields=[field_name],
                 **self._get_doc_type_option(),
-                **params
+                **params,
             )
         except elasticsearch.TransportError as e:
             if not self.silently_fail:
@@ -763,7 +775,7 @@ class ElasticsearchSearchBackend(BaseSearchBackend):
                     model_name,
                     source[DJANGO_ID],
                     raw_result["_score"],
-                    **additional_fields
+                    **additional_fields,
                 )
                 results.append(result)
             else:
