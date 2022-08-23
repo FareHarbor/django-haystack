@@ -4,13 +4,12 @@ on: [pull_request, push]
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
     strategy:
       matrix:
         django-version: [1.11, 2.0, 2.1, 2.2]
         python-version: [3.8]
-        elastic-version: [5.6, '7.10.1']
+        elastic-version: ['5.5.2', '7.10.1']
     services:
       elastic:
         image: elasticsearch:${{ matrix.elastic-version }}
