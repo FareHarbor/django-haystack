@@ -1,3 +1,19 @@
+.. image:: https://github.com/fareharbor/django-haystack/actions/workflows/test.yml/badge.svg
+      :target: https://github.com/fareharbor/django-haystack/actions/workflows/test.yml
+.. image:: https://img.shields.io/badge/code%20style-black-000.svg
+      :target: https://github.com/psf/black
+.. image:: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
+      :target: https://pycqa.github.io/isort/
+
+
+========
+Warning
+========
+
+This is a backport of elasticsearch7_backend to django 1.11 supported version of django-haystack. It supports django 1.11, 2.0, 2.1 and 2.2. 
+For latest version please check the upstream repository.
+
+
 ========
 Haystack
 ========
@@ -11,7 +27,7 @@ Elasticsearch_, Whoosh_, Xapian_, etc.) without having to modify your code.
 
 .. _Solr: http://lucene.apache.org/solr/
 .. _Elasticsearch: https://www.elastic.co/products/elasticsearch
-.. _Whoosh: https://bitbucket.org/mchaput/whoosh/
+.. _Whoosh: https://github.com/mchaput/whoosh/
 .. _Xapian: http://xapian.org/
 
 Haystack is BSD licensed, plays nicely with third-party app without needing to
@@ -39,18 +55,12 @@ Documentation
 
 See the `changelog <docs/changelog.rst>`_
 
-Build Status
-============
-
-.. image:: https://travis-ci.org/django-haystack/django-haystack.svg?branch=master
-   :target: https://travis-ci.org/django-haystack/django-haystack
-
 Requirements
 ============
 
 Haystack has a relatively easily-met set of requirements.
 
-* Python 2.7+ or Python 3.3+
+* Python 3.6+
 * A supported version of Django: https://www.djangoproject.com/download/#supported-versions
 
 Additionally, each backend has its own requirements. You should refer to

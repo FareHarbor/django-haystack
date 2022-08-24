@@ -5,7 +5,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
-from mock import call, patch
+from unittest.mock import call, patch
 
 __all__ = ["CoreManagementCommandsTestCase"]
 
