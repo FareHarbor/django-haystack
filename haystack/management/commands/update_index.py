@@ -91,9 +91,10 @@ def do_update(
 
     # Remember maximum PK seen so far
     max_pk = None
-    current_qs = list(current_qs)
-    if current_qs:
-        max_pk = current_qs[-1].pk
+    # current_qs = list(current_qs)
+    if current_qs.exists():
+        # Using .count() to prevent evaluating the QuerySet
+        max_pk = current_qs[current_qs.count() - 1].pk
 
     is_parent_process = hasattr(os, "getppid") and os.getpid() == os.getppid()
 
