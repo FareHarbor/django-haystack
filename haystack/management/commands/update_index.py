@@ -91,9 +91,10 @@ def do_update(
 
     # Remember maximum PK seen so far
     max_pk = None
-    current_qs = list(current_qs)
-    if current_qs:
-        max_pk = current_qs[-1].pk
+    max_pk_index = current_qs.count() - 1
+    if max_pk_index > -1:
+        max_pk_qs = current_qs[max_pk_index:max_pk_index + 1]
+        max_pk = max_pk_qs[0].pk
 
     is_parent_process = hasattr(os, "getppid") and os.getpid() == os.getppid()
 
